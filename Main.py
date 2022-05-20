@@ -1,4 +1,3 @@
-from ast import match_case
 from tkinter import *
 import matplotlib as mpl
 import matplotlib.pyplot as plt
@@ -199,6 +198,7 @@ def simulationScreen():
 if __name__ == "__main__":
     # create a 800x600 window
     root = Tk()
+    Body.Body.setT(step)
     # prevent resizing
     root.resizable(width=False, height=False)
     root.geometry("1000x800")

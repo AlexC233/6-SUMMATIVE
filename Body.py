@@ -1,12 +1,7 @@
 import numpy as np
 
-T = 5
-
-def setT(t):
-    global T
-    T = t
-
 class Body:
+    T = None
     instance = []
     G = 6.67408e-11
 
@@ -43,12 +38,12 @@ class Body:
         self.yacc = self.ynetforce / self.mass
     
     def calcVel(self):
-        self.xvel = self.xvel + T * self.xacc
-        self.yvel = self.yvel + T * self.yacc
+        self.xvel = self.xvel + self.__class__.T * self.xacc
+        self.yvel = self.yvel + self.__class__.T * self.yacc
 
     def calcPos(self):
-        self.xpos = self.xpos + (self.xvel * T + 0.5 * self.xacc * (T ** 2)) # d = v intial * t + 0.5 * a * t ^ 2
-        self.ypos = self.ypos + (self.yvel * T + 0.5 * self.yacc * (T ** 2))
+        self.xpos = self.xpos + (self.xvel * self.__class__.T + 0.5 * self.xacc * (self.__class__.T ** 2)) # d = v intial * t + 0.5 * a * t ^ 2
+        self.ypos = self.ypos + (self.yvel * self.__class__.T + 0.5 * self.yacc * (self.__class__.T ** 2))
 
     def calc(self):
         self.xnetforce = 0
@@ -110,4 +105,8 @@ class Body:
             objects.append(i.__dict__)
 
         return objects
+    
+    @classmethod
+    def setT(cls, t):
+        cls.T = t
  
