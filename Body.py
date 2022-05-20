@@ -1,9 +1,12 @@
 import numpy as np
-import Main
 
-T = Main.step
+T = 5
 
-class body:
+def setT(t):
+    global T
+    T = t
+
+class Body:
     instance = []
     G = 6.67408e-11
 
@@ -28,7 +31,7 @@ class body:
 
             r = np.sqrt(x**2 + y**2)
 
-            if r < (self.radius + object.radius):
+            if r < (self.radius):
                 self.collide(object)
             elif r != 0:
                 force = self.__class__.G * self.mass * object.mass / (r**2)
@@ -44,8 +47,8 @@ class body:
         self.yvel = self.yvel + T * self.yacc
 
     def calcPos(self):
-        self.xpos = self.xpos + (self.xvel * T - 0.5 * self.xacc * (T ** 2)) # d = v final * t - 0.5 * a * t ^ 2
-        self.ypos = self.ypos + (self.yvel * T - 0.5 * self.yacc * (T ** 2))
+        self.xpos = self.xpos + (self.xvel * T + 0.5 * self.xacc * (T ** 2)) # d = v intial * t + 0.5 * a * t ^ 2
+        self.ypos = self.ypos + (self.yvel * T + 0.5 * self.yacc * (T ** 2))
 
     def calc(self):
         self.xnetforce = 0
@@ -54,8 +57,8 @@ class body:
             if i != self:
                 self.forces(i)
         self.calcAcc()
-        self.calcVel()
         self.calcPos()
+        self.calcVel()
 
     def collide(self, object):
         print("ran")
@@ -68,7 +71,7 @@ class body:
         self.ypos = (self.mass * self.ypos + object.mass * object.ypos) / (self.mass + object.mass)
 
         self.mass += object.mass
-        self.radius = np.cbrt(self.radius**3 + object.radius**3)
+        self.radius = np.sqrt(self.radius**2 + object.radius**2)
 
         self.xvel = momentumX / self.mass
         self.yvel = momentumY / self.mass
@@ -79,20 +82,32 @@ class body:
     @classmethod
     def calcAll(cls):
         for i in cls.instance:
-            # Pruning
-            if i.xpos > 1e10 or i.xpos < 0e10 or i.ypos > 1e10 or i.ypos < 0e10:
-                cls.instance.remove(i)
-                print("cleaned")
-                del i
-            else:
-                i.calc()
+            i.calc()
 
-# create 500 random bodies with mass, radius, xpos, ypos, xvel, yvel similar to the Earth
-def randomBodies(n):
-    for i in range(n):
-        #body(np.random.random() * 1e24, np.random.random() * 1e6, np.random.random() * 1e11, np.random.random() * 1e11, np.random.random() * 0*1e3, np.random.random() * 0*1e3)
-        mass = np.random.random() * 1e24
-        if mass == 0:
-            mass = 1e24
-        body(mass, np.random.random() * 1e6, np.random.random() * 1e8, np.random.random() * 1e8, np.random.random() * 1*1e3, np.random.random() * 1*1e3)
+    # create 500 random bodies with mass, radius, xpos, ypos, xvel, yvel similar to the Earth
+    @classmethod
+    def randomBodies(cls, n, xlim, ylim):
+        for i in cls.instance:
+            cls.instance.remove(i)
+            del i
+        for i in range(n):
+            #body(np.random.random() * 1e24, np.random.random() * 1e6, np.random.random() * 1e11, np.random.random() * 1e11, np.random.random() * 0*1e3, np.random.random() * 0*1e3)
+            radius = np.random.random() * 1e6
+            if radius == 0:
+                radius = 1e6
+
+            mass = 4 / 3 * radius ** 3 * np.pi * 5513000
+
+            xpos = np.random.uniform(xlim[0], xlim[1])
+            ypos = np.random.uniform(ylim[0], ylim[1])
+
+            Body(mass, radius, xpos, ypos, np.random.random() * 1*1e3, np.random.random() * 1*1e3)
+
+    @classmethod
+    def getObjects(cls):
+        objects = []
+        for i in cls.instance:
+            objects.append(i.__dict__)
+
+        return objects
  
