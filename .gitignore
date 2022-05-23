@@ -2,3 +2,4 @@ simulations/*
 videos/*
 __pycache__/
 .vscode/
+testing.py

@@ -115,6 +115,7 @@ def simulationScreen(generate):
 
         if videoFolder != None:
             if frame % 100 == 0:
+                FileManager.saveSimulation(loadedJSON, runtime, frame)
                 cap.capture(videoFolder + "\\" + str(frame) + ".png")
             frame += 1
 
