@@ -26,7 +26,7 @@ class Body:
 
             r = np.sqrt(x**2 + y**2)
 
-            if r < (self.radius):
+            if r < (self.radius + object.radius):
                 self.collide(object)
             elif r != 0:
                 force = self.__class__.G * self.mass * object.mass / (r**2)
@@ -109,4 +109,12 @@ class Body:
     @classmethod
     def setT(cls, t):
         cls.T = t
+
+    @classmethod
+    def setObjects(cls, objects):
+        for i in cls.instance:
+            cls.instance.remove(i)
+            del i
+        for i in objects:
+            Body(i['mass'], i['radius'], i['xpos'], i['ypos'], i['xvel'], i['yvel'])
  
