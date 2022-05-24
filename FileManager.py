@@ -25,7 +25,7 @@ def startSettings():
         settings["objects"],
     )
 
-def saveSimulation(fileName, runtime, frames):
+def saveSimulation(fileName, runtime, frames, videoFolder):
 
     # check if fileName ends with .json
     if not fileName.endswith(".json"):
@@ -37,6 +37,8 @@ def saveSimulation(fileName, runtime, frames):
         simulation["bodies"] = Body.getObjects()
         if frames != None:
             simulation["frames"] = frames
+        if videoFolder != None:
+            simulation["video"] = videoFolder
         with open(
             fileName, "w"
         ) as f:
@@ -52,11 +54,14 @@ def loadSimulation(fileName):
 
     # check if the "video" key exists
     if "video" in simulation:
-        return simulation["runtime"], simulation["video"]
+        return simulation["runtime"], simulation["video"], simulation["frames"]
 
     return simulation["runtime"]
 
 def saveVideo(fileName, JSON):
+    if not JSON.endswith(".json"):
+        JSON += ".json"
+
     if os.path.exists("videos/"):
         os.mkdir(fileName)
         with open(JSON, "r") as f:

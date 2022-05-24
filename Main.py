@@ -4,10 +4,12 @@ from tkinter import messagebox
 import matplotlib as mpl
 import matplotlib.pyplot as plt
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
+import tkcap
+
 import numpy as np
 import Body
 import FileManager
-import tkcap
+import VideoMaker
 
 plt.style.use('dark_background')
 
@@ -50,7 +52,7 @@ def clear():
 
 def startScreen():
     def loadWindow():
-        global runtime, loadedJSON, videoFolder
+        global runtime, loadedJSON, videoFolder, frame
 
         file = filedialog.askopenfilename(
             initialdir="./simulations/", title="Select file", filetypes=(("json files", "*.json"), ("all files", "*.*")))
@@ -58,7 +60,10 @@ def startScreen():
         if file != "":
             try:
                 try:
-                    runtime, videoFolder = FileManager.loadSimulation(file)
+                    try:
+                        runtime, videoFolder, frame = FileManager.loadSimulation(file)
+                    except:
+                        runtime, videoFolder = FileManager.loadSimulation(file)
                 except:
                     runtime = FileManager.loadSimulation(file) 
                 loadedJSON = file
@@ -115,8 +120,9 @@ def simulationScreen(generate):
 
         if videoFolder != None:
             if frame % 100 == 0:
-                FileManager.saveSimulation(loadedJSON, runtime, frame)
+                FileManager.saveSimulation(loadedJSON, runtime, frame, videoFolder)
                 cap.capture(videoFolder + "\\" + str(frame) + ".png")
+                VideoMaker.makeVideo(videoFolder)
             frame += 1
 
         runtime += step
@@ -135,10 +141,15 @@ def simulationScreen(generate):
         fileName = filedialog.asksaveasfilename(initialdir="./simulations/", title="Save Simulation", filetypes=(("json files", "*.json"), ("all files", "*.*")))
         if fileName != "":
             if videoFolder != None:
-                FileManager.saveSimulation(fileName, runtime, frame)
+                FileManager.saveSimulation(fileName, runtime, frame, videoFolder)
             else:
-                FileManager.saveSimulation(fileName, runtime, None)
+                FileManager.saveSimulation(fileName, runtime, None, None)
         loadedJSON = fileName
+
+        if not fileName.endswith(".json"):
+            fileName += ".json"
+        if videoFolder == None:
+            recordButton.config(state=NORMAL)
 
     def saveVideo():
         global videoFolder, loadedJSON
@@ -146,6 +157,9 @@ def simulationScreen(generate):
         if fileName != "":
             FileManager.saveVideo(fileName, loadedJSON)
         videoFolder = fileName
+
+        if videoFolder != None:
+            recordButton.config(state=DISABLED)
 
     def control():
         if controlButton.cget('text') == 'Pause':
@@ -228,7 +242,7 @@ def simulationScreen(generate):
 
     xsize = size[0]
     ysize = size[1]
-    print(xsize, ysize)
+    #print(xsize, ysize)
 
     figure.add_subplot(111, xlim=(xlim[0], xlim[1]), ylim=(ylim[0], ylim[1])).scatter(
         getXPlots(), getYPlots(), s=getSizes(), marker="o", color="white")
@@ -255,7 +269,7 @@ def simulationScreen(generate):
     setTimeLabel()
     timeElapsed.place(bordermode=OUTSIDE, x=800, y=300, width=200, height=100)
 
-    objectsLabel = Label(root, text="Objects: " + str(objects),
+    objectsLabel = Label(root, text="Objects: " + Body.Body.instance.__len__().__str__(),
                          borderwidth=2, relief="ridge", font="Helvetica 20")
     objectsLabel.place(bordermode=OUTSIDE, x=800, y=400, width=200, height=100)
 
@@ -265,7 +279,7 @@ def simulationScreen(generate):
 
     recordButton = Button(root, text="Record",
                           font="Helvetica 20", command=saveVideo)
-    if videoFolder != None:
+    if videoFolder != None or loadedJSON == None:
         recordButton.config(state=DISABLED)
     recordButton.place(bordermode=OUTSIDE, x=800, y=600, width=200, height=100)
 
