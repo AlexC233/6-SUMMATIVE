@@ -1,5 +1,6 @@
 import numpy as np
 
+
 class Body:
     T = None
     instance = []
@@ -9,14 +10,14 @@ class Body:
         self.__class__.instance.append(self)
         self.mass = mass
         self.radius = radius
-        self.xpos = xpos # x position
-        self.ypos = ypos # y position
-        self.xvel = xvel # x velocity
-        self.yvel = yvel # y velocity
-        self.xacc = 0 # x acceleration
-        self.yacc = 0 # y acceleration
-        self.xnetforce = 0 # x net force
-        self.ynetforce = 0 # y net force
+        self.xpos = xpos  # x position
+        self.ypos = ypos  # y position
+        self.xvel = xvel  # x velocity
+        self.yvel = yvel  # y velocity
+        self.xacc = 0  # x acceleration
+        self.yacc = 0  # y acceleration
+        self.xnetforce = 0  # x net force
+        self.ynetforce = 0  # y net force
 
     # calculate the x and y components of the gravitational force between two bodies
     def forces(self, object):
@@ -36,14 +37,17 @@ class Body:
     def calcAcc(self):
         self.xacc = self.xnetforce / self.mass
         self.yacc = self.ynetforce / self.mass
-    
+
     def calcVel(self):
         self.xvel = self.xvel + self.__class__.T * self.xacc
         self.yvel = self.yvel + self.__class__.T * self.yacc
 
     def calcPos(self):
-        self.xpos = self.xpos + (self.xvel * self.__class__.T + 0.5 * self.xacc * (self.__class__.T ** 2)) # d = v intial * t + 0.5 * a * t ^ 2
-        self.ypos = self.ypos + (self.yvel * self.__class__.T + 0.5 * self.yacc * (self.__class__.T ** 2))
+        self.xpos = self.xpos + (self.xvel * self.__class__.T + 0.5 * self.xacc * (
+            self.__class__.T ** 2))  # d = v intial * t + 0.5 * a * t ^ 2
+        self.ypos = self.ypos + \
+            (self.yvel * self.__class__.T + 0.5 *
+             self.yacc * (self.__class__.T ** 2))
 
     def calc(self):
         self.xnetforce = 0
@@ -62,8 +66,10 @@ class Body:
         momentumY = self.mass * self.yvel + object.mass * object.yvel
 
         # Center of mass formula
-        self.xpos = (self.mass * self.xpos + object.mass * object.xpos) / (self.mass + object.mass)
-        self.ypos = (self.mass * self.ypos + object.mass * object.ypos) / (self.mass + object.mass)
+        self.xpos = (self.mass * self.xpos + object.mass *
+                     object.xpos) / (self.mass + object.mass)
+        self.ypos = (self.mass * self.ypos + object.mass *
+                     object.ypos) / (self.mass + object.mass)
 
         self.mass += object.mass
         self.radius = np.sqrt(self.radius**2 + object.radius**2)
@@ -96,7 +102,8 @@ class Body:
             xpos = np.random.uniform(xlim[0], xlim[1])
             ypos = np.random.uniform(ylim[0], ylim[1])
 
-            Body(mass, radius, xpos, ypos, np.random.random() * 1*1e3, np.random.random() * 1*1e3)
+            Body(mass, radius, xpos, ypos, np.random.random()
+                 * 1*1e3, np.random.random() * 1*1e3)
 
     @classmethod
     def getObjects(cls):
@@ -105,7 +112,7 @@ class Body:
             objects.append(i.__dict__)
 
         return objects
-    
+
     @classmethod
     def setT(cls, t):
         cls.T = t
@@ -116,5 +123,5 @@ class Body:
             cls.instance.remove(i)
             del i
         for i in objects:
-            Body(i['mass'], i['radius'], i['xpos'], i['ypos'], i['xvel'], i['yvel'])
- 
+            Body(i['mass'], i['radius'], i['xpos'],
+                 i['ypos'], i['xvel'], i['yvel'])

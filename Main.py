@@ -61,14 +61,15 @@ def startScreen():
             try:
                 try:
                     try:
-                        runtime, videoFolder, frame = FileManager.loadSimulation(file)
+                        runtime, videoFolder, frame = FileManager.loadSimulation(
+                            file)
                     except:
                         runtime, videoFolder = FileManager.loadSimulation(file)
                 except:
-                    runtime = FileManager.loadSimulation(file) 
+                    runtime = FileManager.loadSimulation(file)
                 loadedJSON = file
                 simulationScreen(False)
-                
+
             except:
                 messagebox.showerror(
                     "Error", file + "\nis not a valid simulation file!")
@@ -120,7 +121,8 @@ def simulationScreen(generate):
 
         if videoFolder != None:
             if frame % 100 == 0:
-                FileManager.saveSimulation(loadedJSON, runtime, frame, videoFolder)
+                FileManager.saveSimulation(
+                    loadedJSON, runtime, frame, videoFolder)
                 cap.capture(videoFolder + "\\" + str(frame) + ".png")
                 VideoMaker.makeVideo(videoFolder)
             frame += 1
@@ -138,10 +140,12 @@ def simulationScreen(generate):
 
     def saveSimulation():
         global frame, videoFolder, loadedJSON
-        fileName = filedialog.asksaveasfilename(initialdir="./simulations/", title="Save Simulation", filetypes=(("json files", "*.json"), ("all files", "*.*")))
+        fileName = filedialog.asksaveasfilename(
+            initialdir="./simulations/", title="Save Simulation", filetypes=(("json files", "*.json"), ("all files", "*.*")))
         if fileName != "":
             if videoFolder != None:
-                FileManager.saveSimulation(fileName, runtime, frame, videoFolder)
+                FileManager.saveSimulation(
+                    fileName, runtime, frame, videoFolder)
             else:
                 FileManager.saveSimulation(fileName, runtime, None, None)
         loadedJSON = fileName
@@ -153,7 +157,8 @@ def simulationScreen(generate):
 
     def saveVideo():
         global videoFolder, loadedJSON
-        fileName = filedialog.asksaveasfilename(initialdir="./videos/", title="Save Video", filetypes=(("mp4 files", "*.mp4"), ("all files", "*.*")))
+        fileName = filedialog.asksaveasfilename(
+            initialdir="./videos/", title="Save Video", filetypes=(("mp4 files", "*.mp4"), ("all files", "*.*")))
         if fileName != "":
             FileManager.saveVideo(fileName, loadedJSON)
         videoFolder = fileName
@@ -177,9 +182,9 @@ def simulationScreen(generate):
 
         global runtime
         runtime = 0
-        timeElapsed.config(text='0s')
+        timeElapsed.config(text='0.00s')
 
-        root.after(interval, lambda: [timeElapsed.config(text='0s')])
+        root.after(interval, lambda: [timeElapsed.config(text='0.00s')])
 
     def speedChange():
         global interval
@@ -233,7 +238,6 @@ def simulationScreen(generate):
         canvas.draw()
     # endregion
 
-    # create a matplotlib figure that is 800x600 pixels and is placed at (0,0)
     figure = mpl.figure.Figure(figsize=[6.4, 6.4], dpi=100)
 
     size = figure.get_size_inches() * figure.dpi
@@ -242,7 +246,6 @@ def simulationScreen(generate):
 
     xsize = size[0]
     ysize = size[1]
-    #print(xsize, ysize)
 
     figure.add_subplot(111, xlim=(xlim[0], xlim[1]), ylim=(ylim[0], ylim[1])).scatter(
         getXPlots(), getYPlots(), s=getSizes(), marker="o", color="white")
@@ -291,7 +294,7 @@ if __name__ == "__main__":
     # prevent resizing
     root.resizable(width=False, height=False)
     root.geometry("1000x800")
-    root.title("Path")
+    root.title("Gravity Simulator")
 
     cap = tkcap.CAP(root)
 

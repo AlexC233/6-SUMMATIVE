@@ -4,6 +4,7 @@ from Body import Body
 
 relPath = os.path.dirname(__file__)
 
+
 def startSettings():
     if os.path.exists("settings.json"):
         with open("settings.json", "r") as f:
@@ -24,6 +25,7 @@ def startSettings():
         settings["ylim"],
         settings["objects"],
     )
+
 
 def saveSimulation(fileName, runtime, frames, videoFolder):
 
@@ -47,6 +49,7 @@ def saveSimulation(fileName, runtime, frames, videoFolder):
         os.mkdir(relPath + "/simulations/")
         saveSimulation(fileName, runtime)
 
+
 def loadSimulation(fileName):
     with open(fileName, "r") as f:
         simulation = json.load(f)
@@ -57,6 +60,7 @@ def loadSimulation(fileName):
         return simulation["runtime"], simulation["video"], simulation["frames"]
 
     return simulation["runtime"]
+
 
 def saveVideo(fileName, JSON):
     if not JSON.endswith(".json"):
