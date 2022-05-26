@@ -5,6 +5,10 @@ from cv2 import VideoWriter_fourcc
 
 
 def makeVideo(path):
+    """Creates a mp4 video at the given path at 15 frames per second
+    path: path to the video"""
+
+    # Code modified from https://stackoverflow.com/a/44948030 
     video_name = path + ".mp4"
 
     images = os.listdir(path)
@@ -24,7 +28,3 @@ def makeVideo(path):
 
     cv2.destroyAllWindows()
     video.release()
-
-
-if __name__ == "__main__":
-    makeVideo('D:/Desktop/CS/11 CS/6 SUMMATIVE/videos/videoTest')

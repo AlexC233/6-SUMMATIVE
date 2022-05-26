@@ -6,6 +6,7 @@ relPath = os.path.dirname(__file__)
 
 
 def startSettings():
+    """Load the settings file and return the settings"""
     if os.path.exists("settings.json"):
         with open("settings.json", "r") as f:
             settings = json.load(f)
@@ -28,7 +29,11 @@ def startSettings():
 
 
 def saveSimulation(fileName, runtime, frames, videoFolder):
-
+    """Save the simulation to a file
+    fileName: name of the file to save to
+    runtime: the runtime of the simulation
+    frames: the number of frames in the simulation
+    videoFolder: the folder of the video"""
     # check if fileName ends with .json
     if not fileName.endswith(".json"):
         fileName += ".json"
@@ -51,6 +56,8 @@ def saveSimulation(fileName, runtime, frames, videoFolder):
 
 
 def loadSimulation(fileName):
+    """Load the simulation from a file
+    fileName: name of the file to load from"""
     with open(fileName, "r") as f:
         simulation = json.load(f)
     Body.setObjects(simulation["bodies"])
@@ -63,6 +70,10 @@ def loadSimulation(fileName):
 
 
 def saveVideo(fileName, JSON):
+    """Save the video to a file
+    fileName: name of the file to save to
+    JSON: the JSON file to save"""
+    # check if fileName ends with .json
     if not JSON.endswith(".json"):
         JSON += ".json"
 

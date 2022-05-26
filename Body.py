@@ -2,11 +2,19 @@ import numpy as np
 
 
 class Body:
+    """The class that encapsulates the objects in the simulation"""
     T = None
     instance = []
     G = 6.67408e-11
 
     def __init__(self, mass, radius, xpos, ypos, xvel, yvel):
+        """Initializes the object
+        mass: mass of the object in kilograms
+        radius: radius of the object in meters
+        xpos: x position of the object in meters
+        ypos: y position of the object in meters
+        xvel: x velocity of the object in meters
+        yvel: y velocity of the object in meters"""
         self.__class__.instance.append(self)
         self.mass = mass
         self.radius = radius
@@ -21,6 +29,8 @@ class Body:
 
     # calculate the x and y components of the gravitational force between two bodies
     def forces(self, object):
+        """Calculates the gravitational force between two bodies
+        object: the other body"""
         if self != object:
             x = object.xpos - self.xpos
             y = object.ypos - self.ypos
@@ -35,14 +45,17 @@ class Body:
                 self.ynetforce += force * y / r
 
     def calcAcc(self):
+        """Calculates the acceleration of the object using the formula a = F/m"""
         self.xacc = self.xnetforce / self.mass
         self.yacc = self.ynetforce / self.mass
 
     def calcVel(self):
+        """Calculates the velocity of the object using the formula v_f = v_i + a * t"""
         self.xvel = self.xvel + self.__class__.T * self.xacc
         self.yvel = self.yvel + self.__class__.T * self.yacc
 
     def calcPos(self):
+        """Calculates the position of the object using the formula x_f = x_i + v_i * t + 1/2 * a * t^2"""
         self.xpos = self.xpos + (self.xvel * self.__class__.T + 0.5 * self.xacc * (
             self.__class__.T ** 2))  # d = v intial * t + 0.5 * a * t ^ 2
         self.ypos = self.ypos + \
@@ -50,6 +63,7 @@ class Body:
              self.yacc * (self.__class__.T ** 2))
 
     def calc(self):
+        """Calculates the acceleration, velocity, and position of the object"""
         self.xnetforce = 0
         self.ynetforce = 0
         for i in self.__class__.instance:
@@ -60,7 +74,8 @@ class Body:
         self.calcVel()
 
     def collide(self, object):
-        print("ran")
+        """Handles the collision between two bodies
+        object: the other body"""
         # Momentum formula
         momentumX = self.mass * self.xvel + object.mass * object.xvel
         momentumY = self.mass * self.yvel + object.mass * object.yvel
@@ -82,12 +97,17 @@ class Body:
 
     @classmethod
     def calcAll(cls):
+        """Calculates the acceleration, velocity, and position of all the objects"""
         for i in cls.instance:
             i.calc()
 
     # create 500 random bodies with mass, radius, xpos, ypos, xvel, yvel similar to the Earth
     @classmethod
     def randomBodies(cls, n, xlim, ylim):
+        """Creates n random bodies
+        n: number of bodies
+        xlim: x limit of the simulation
+        ylim: y limit of the simulation"""
         for i in cls.instance:
             cls.instance.remove(i)
             del i
