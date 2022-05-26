@@ -13,21 +13,27 @@ except ImportError:
 
 try:
     import numpy as np
-except:
+except ImportError:
     messagebox.showerror("numpy not installed!",
                          "Please install numpy by running \n\"python -m pip install -U numpy\" in your terminal.")
     exit()
 
 try:
     import tkcap
-except:
+except ImportError:
     messagebox.showerror("tkcap not installed!",
                          "Please install tkcap by running \n\"python -m pip install -U tkcap\" in your terminal.")
     exit()
 
 import Body
 import FileManager
-import VideoMaker
+
+try:
+    import VideoMaker
+except ImportError:
+    messagebox.showerror("opencv-python not installed!",
+                         "Please install VideoMaker by running \n\"python -m pip install -U opencv-python\" in your terminal.")
+    exit()
 
 plt.style.use('dark_background')
 
