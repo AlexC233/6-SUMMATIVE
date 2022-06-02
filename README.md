@@ -1,7 +1,6 @@
 Introduction
 ============
 This program simulates the motion of astronomical bodies in 2-d space.
-It is based on the [N-body problem](https://en.wikipedia.org/wiki/N-body_problem).
 <p>
 The simulation utilizes Newtonian mechanics to calculate the gravitational force between bodies. 
 <p>
