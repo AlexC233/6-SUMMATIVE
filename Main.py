@@ -101,7 +101,14 @@ def startScreen():
 
     def infoScreen():
         """Function for displaying information about the program"""
-        info = messagebox.showinfo("Info", "This is a n-body simulation program.\n\nIt simulates 500 random objects of near Earth attributes.\n\nTo record a simulation, first save the simulation, then press the record button. The recording cannot be paused once started.\n\nTo load a simulation, first press the load button, then select the simulation file.\n\nTo start a new simulation, press the new button.\n\nTo exit the program, press the exit button.")
+        info = messagebox.showinfo("Info", 
+        """This is a n-body simulation program.
+        \nIt simulates 500 random objects of near Earth attributes.
+        \nTo access the various buttons in the simulation screen, the simulation must be paused.
+        \nTo record a simulation, first save the simulation, then press the record button. The recording cannot be paused once started.
+        \nTo load a simulation, first press the load button, then select the simulation file.
+        \nTo start a new simulation, press the new button.
+        \nTo exit the program, press the exit button.""")
 
     clear()
 
@@ -153,11 +160,12 @@ def simulationScreen(generate):
         global runtime, frame, videoFolder, cap
 
         if videoFolder != None:
+            # When a video is being recorded, the simulation will be automatically saved every 100 frames.
             if frame % 100 == 0:
                 FileManager.saveSimulation(
                     loadedJSON, runtime, frame, videoFolder)
                 cap.capture(videoFolder + "\\" + str(frame) + ".png")
-                VideoMaker.makeVideo(videoFolder)
+
             frame += 1
 
         runtime += step
@@ -180,6 +188,7 @@ def simulationScreen(generate):
             if videoFolder != None:
                 FileManager.saveSimulation(
                     fileName, runtime, frame, videoFolder)
+                VideoMaker.makeVideo(videoFolder)
             else:
                 FileManager.saveSimulation(fileName, runtime, None, None)
         loadedJSON = fileName
@@ -202,11 +211,20 @@ def simulationScreen(generate):
             recordButton.config(state=DISABLED)
 
     def control():
-        """Function for starting and stopping the simulation when the control button is pressed"""
+        """Function for starting and stopping the simulation when the control button is pressed
+        The method also disables all other buttons while the simulation is running, and enables them when it is not"""
         if controlButton.cget('text') == 'Pause':
             controlButton.config(text='Resume')
+            saveButton.config(state=NORMAL)
+            speedButton.config(state=NORMAL)
+            randomizeButton.config(state=NORMAL)
+            quitButton.config(state=NORMAL)
         elif controlButton.cget('text') == 'Resume' or controlButton.cget('text') == 'Start':
             controlButton.config(text='Pause')
+            saveButton.config(state=DISABLED)
+            speedButton.config(state=DISABLED)
+            randomizeButton.config(state=DISABLED)
+            quitButton.config(state=DISABLED)
 
         update(interval)
 
@@ -280,6 +298,18 @@ def simulationScreen(generate):
         canvas.draw()
     # endregion
 
+    def close():
+        """Function for closing the program"""
+        # Create a popup asking the user if they want to save the simulation
+        state = messagebox.askyesnocancel("Save Simulation", "Do you want to save the simulation before closing?")
+        if state == None:
+            return
+        if state:
+            saveSimulation()
+            root.destroy()
+        else:
+            root.destroy()
+
     figure = mpl.figure.Figure(figsize=[6.4, 6.4], dpi=100)
 
     size = figure.get_size_inches() * figure.dpi
@@ -328,6 +358,9 @@ def simulationScreen(generate):
         recordButton.config(state=DISABLED)
     recordButton.place(bordermode=OUTSIDE, x=800, y=600, width=200, height=100)
 
+    quitButton = Button(root, text="Quit", font="Helvetica 20", command=close)
+    quitButton.place(bordermode=OUTSIDE, x=800, y=700, width=200, height=100)
+
 
 if __name__ == "__main__":
     # create a 800x600 window
@@ -337,8 +370,10 @@ if __name__ == "__main__":
     root.resizable(width=False, height=False)
     root.geometry("1000x800")
     root.title("Gravity Simulator")
+    # Set the favicon to icon.png
+    root.iconbitmap("./icon.ico")
 
-    # https://stackoverflow.com/a/50596988
+    # Window centering code from https://stackoverflow.com/a/50596988
     root.eval('tk::PlaceWindow . center')
 
     window_height = 800

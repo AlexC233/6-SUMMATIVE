@@ -42,15 +42,18 @@ def saveSimulation(fileName, runtime, frames, videoFolder):
         simulation = {}
         simulation["runtime"] = runtime
         simulation["bodies"] = Body.getObjects()
+        # If certain parameters are provided, they will be stored as well
         if frames != None:
             simulation["frames"] = frames
         if videoFolder != None:
             simulation["video"] = videoFolder
+
         with open(
             fileName, "w"
         ) as f:
             json.dump(simulation, f, indent=4)
     else:
+        # If the simulations folder does not exist, it will be created
         os.mkdir(relPath + "/simulations/")
         saveSimulation(fileName, runtime)
 
@@ -62,10 +65,11 @@ def loadSimulation(fileName):
         simulation = json.load(f)
     Body.setObjects(simulation["bodies"])
 
-    # check if the "video" key exists
+    # check if the "video" key exists, and if it does, information regarding the video will be loaded
     if "video" in simulation:
         return simulation["runtime"], simulation["video"], simulation["frames"]
 
+    # Otherwise, only the runtime will be returned
     return simulation["runtime"]
 
 

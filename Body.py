@@ -13,8 +13,8 @@ class Body:
         radius: radius of the object in meters
         xpos: x position of the object in meters
         ypos: y position of the object in meters
-        xvel: x velocity of the object in meters
-        yvel: y velocity of the object in meters"""
+        xvel: x velocity of the object in meters per second
+        yvel: y velocity of the object in meters per second"""
         self.__class__.instance.append(self)
         self.mass = mass
         self.radius = radius
@@ -29,33 +29,35 @@ class Body:
 
     # calculate the x and y components of the gravitational force between two bodies
     def forces(self, object):
-        """Calculates the gravitational force between two bodies
+        """Calculates the gravitational force between two bodies in the x and y directions in Newtons
         object: the other body"""
         if self != object:
             x = object.xpos - self.xpos
             y = object.ypos - self.ypos
 
+            # Pythagorean Theorem
             r = np.sqrt(x**2 + y**2)
 
             if r < (self.radius + object.radius):
                 self.collide(object)
             elif r != 0:
                 force = self.__class__.G * self.mass * object.mass / (r**2)
+                # Similar Triangles
                 self.xnetforce += force * x / r
                 self.ynetforce += force * y / r
 
     def calcAcc(self):
-        """Calculates the acceleration of the object using the formula a = F/m"""
+        """Calculates the acceleration of the object using the formula a = F/m in meters per second squared"""
         self.xacc = self.xnetforce / self.mass
         self.yacc = self.ynetforce / self.mass
 
     def calcVel(self):
-        """Calculates the velocity of the object using the formula v_f = v_i + a * t"""
+        """Calculates the velocity of the object using the formula v_f = v_i + a * t in meters per second"""
         self.xvel = self.xvel + self.__class__.T * self.xacc
         self.yvel = self.yvel + self.__class__.T * self.yacc
 
     def calcPos(self):
-        """Calculates the position of the object using the formula x_f = x_i + v_i * t + 1/2 * a * t^2"""
+        """Calculates the position of the object using the formula x_f = x_i + v_i * t + 1/2 * a * t^2 in meters"""
         self.xpos = self.xpos + (self.xvel * self.__class__.T + 0.5 * self.xacc * (
             self.__class__.T ** 2))  # d = v intial * t + 0.5 * a * t ^ 2
         self.ypos = self.ypos + \
@@ -117,6 +119,7 @@ class Body:
             if radius == 0:
                 radius = 1e6
 
+            # Based on the density of the Earth
             mass = 4 / 3 * radius ** 3 * np.pi * 5513000
 
             xpos = np.random.uniform(xlim[0], xlim[1])
@@ -127,6 +130,7 @@ class Body:
 
     @classmethod
     def getObjects(cls):
+        """Returns the list of objects"""
         objects = []
         for i in cls.instance:
             objects.append(i.__dict__)
@@ -135,10 +139,14 @@ class Body:
 
     @classmethod
     def setT(cls, t):
+        """Sets the time step
+        t: time step in seconds"""
         cls.T = t
 
     @classmethod
     def setObjects(cls, objects):
+        """Initialize objects from a list of the objects
+        objects: list of objects"""
         for i in cls.instance:
             cls.instance.remove(i)
             del i
