@@ -101,8 +101,8 @@ def startScreen():
 
     def infoScreen():
         """Function for displaying information about the program"""
-        info = messagebox.showinfo("Info", 
-        """This is a n-body simulation program.
+        info = messagebox.showinfo("Info",
+                                   """This is a n-body simulation program.
         \nIt simulates 500 random objects of near Earth attributes.
         \nTo access the various buttons in the simulation screen, the simulation must be paused.
         \nTo record a simulation, first save the simulation, then press the record button. The recording cannot be paused once started.
@@ -184,19 +184,22 @@ def simulationScreen(generate):
         global frame, videoFolder, loadedJSON
         fileName = filedialog.asksaveasfilename(
             initialdir="./simulations/", title="Save Simulation", filetypes=(("json files", "*.json"), ("all files", "*.*")))
+        loadedJSON = fileName
         if fileName != "":
             if videoFolder != None:
                 FileManager.saveSimulation(
                     fileName, runtime, frame, videoFolder)
                 VideoMaker.makeVideo(videoFolder)
+
             else:
                 FileManager.saveSimulation(fileName, runtime, None, None)
-        loadedJSON = fileName
+
+            recordButton.config(state=NORMAL)
+        else:
+            return
 
         if not fileName.endswith(".json"):
             fileName += ".json"
-        if videoFolder == None:
-            recordButton.config(state=NORMAL)
 
     def saveVideo():
         """Function for starting the recording of a video when the record button is pressed"""
@@ -207,7 +210,7 @@ def simulationScreen(generate):
             FileManager.saveVideo(fileName, loadedJSON)
         videoFolder = fileName
 
-        if videoFolder != None:
+        if videoFolder != "":
             recordButton.config(state=DISABLED)
 
     def control():
@@ -234,6 +237,9 @@ def simulationScreen(generate):
 
         Body.Body.randomBodies(objects, xlim, ylim)
         plot()
+
+        objectsLabel.config(text="Objects: " +
+                            Body.Body.instance.__len__().__str__())
 
         global runtime
         runtime = 0
@@ -284,6 +290,7 @@ def simulationScreen(generate):
         global xsize, ysize, xlim, ylim
         args = []
         for i in Body.Body.instance:
+            # Sets the size of the objects to be proportional to their radius
             args.append(np.ceil((i.radius**2*np.pi) /
                         (xlim[1]*ylim[1])*xsize*ysize))
         return args
@@ -301,12 +308,16 @@ def simulationScreen(generate):
     def close():
         """Function for closing the program"""
         # Create a popup asking the user if they want to save the simulation
-        state = messagebox.askyesnocancel("Save Simulation", "Do you want to save the simulation before closing?")
+        global loadedJSON
+        state = messagebox.askyesnocancel(
+            "Save Simulation", "Do you want to save the simulation before closing?")
         if state == None:
             return
         if state:
             saveSimulation()
-            root.destroy()
+            # Makes sure the user actually saved the file
+            if loadedJSON != '':
+                root.destroy()
         else:
             root.destroy()
 
@@ -319,6 +330,7 @@ def simulationScreen(generate):
     xsize = size[0]
     ysize = size[1]
 
+    # Create the scatter plot itself and add it to the window
     figure.add_subplot(111, xlim=(xlim[0], xlim[1]), ylim=(ylim[0], ylim[1])).scatter(
         getXPlots(), getYPlots(), s=getSizes(), marker="o", color="white")
     canvas = FigureCanvasTkAgg(figure, master=root)

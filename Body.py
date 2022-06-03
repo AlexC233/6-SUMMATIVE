@@ -111,8 +111,9 @@ class Body:
         xlim: x limit of the simulation
         ylim: y limit of the simulation"""
         for i in cls.instance:
-            cls.instance.remove(i)
+
             del i
+        cls.instance = []
         for i in range(n):
             #body(np.random.random() * 1e24, np.random.random() * 1e6, np.random.random() * 1e11, np.random.random() * 1e11, np.random.random() * 0*1e3, np.random.random() * 0*1e3)
             radius = np.random.random() * 1e6
@@ -148,8 +149,8 @@ class Body:
         """Initialize objects from a list of the objects
         objects: list of objects"""
         for i in cls.instance:
-            cls.instance.remove(i)
             del i
+        cls.instance = []
         for i in objects:
             Body(i['mass'], i['radius'], i['xpos'],
                  i['ypos'], i['xvel'], i['yvel'])

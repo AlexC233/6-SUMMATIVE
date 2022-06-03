@@ -12,20 +12,22 @@ def makeVideo(path):
     video_name = path + ".mp4"
 
     images = os.listdir(path)
-    # sort the images in increasing numerical order
-    images.sort(key=lambda x: int(x.split(".")[0]))
 
-    # Ensures that the files end with .png
-    images = [img for img in images if img.endswith(".png")]
-    frame = cv2.imread(os.path.join(path, images[0]))
-    height, width, layers = frame.shape
+    if images != []:
+        # sort the images in increasing numerical order
+        images.sort(key=lambda x: int(x.split(".")[0]))
 
-    #cv2.VideoWriter(output_filename, fourcc, fps, self._window_shape)
-    video = cv2.VideoWriter(
-        video_name, VideoWriter_fourcc(*'mp4v'), 15, (width, height))
+        # Ensures that the files end with .png
+        images = [img for img in images if img.endswith(".png")]
+        frame = cv2.imread(os.path.join(path, images[0]))
+        height, width, layers = frame.shape
 
-    for image in images:
-        video.write(cv2.imread(os.path.join(path, image)))
+        #cv2.VideoWriter(output_filename, fourcc, fps, self._window_shape)
+        video = cv2.VideoWriter(
+            video_name, VideoWriter_fourcc(*'mp4v'), 15, (width, height))
 
-    cv2.destroyAllWindows()
-    video.release()
+        for image in images:
+            video.write(cv2.imread(os.path.join(path, image)))
+
+        cv2.destroyAllWindows()
+        video.release()
