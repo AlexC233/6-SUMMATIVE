@@ -106,6 +106,7 @@ def startScreen():
         \nIt simulates 500 random objects of near Earth attributes.
         \nTo access the various buttons in the simulation screen, the simulation must be paused.
         \nTo record a simulation, first save the simulation, then press the record button. The recording cannot be paused once started.
+        \nTo ensure the recording feature work properly, there must be no other windows on top of the simulation window.
         \nTo load a simulation, first press the load button, then select the simulation file.
         \nTo start a new simulation, press the new button.
         \nTo exit the program, press the exit button.""")

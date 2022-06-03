@@ -44,6 +44,8 @@ This program captures a screenshot of the simulation every 100 frames, and combi
 
 The video is saved at 15 fps, and is in mp4 format.
 
+For the recording to work, there must be no other window overlapping the simulation window.
+
 Requirements
 ============
 * Python 3.10 or later
